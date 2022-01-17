@@ -242,7 +242,7 @@
   <transmission name="shoulder_pan_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="shoulder_pan_joint">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="shoulder_pan_motor">
       <mechanicalReduction>1</mechanicalReduction>
@@ -251,7 +251,7 @@
   <transmission name="shoulder_lift_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="shoulder_lift_joint">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="shoulder_lift_motor">
       <mechanicalReduction>1</mechanicalReduction>
@@ -260,7 +260,7 @@
   <transmission name="elbow_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="elbow_joint">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="elbow_motor">
       <mechanicalReduction>1</mechanicalReduction>
@@ -269,7 +269,7 @@
   <transmission name="wrist_1_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="wrist_1_joint">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="wrist_1_motor">
       <mechanicalReduction>1</mechanicalReduction>
@@ -278,7 +278,7 @@
   <transmission name="wrist_2_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="wrist_2_joint">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="wrist_2_motor">
       <mechanicalReduction>1</mechanicalReduction>
@@ -287,7 +287,7 @@
   <transmission name="wrist_3_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="wrist_3_joint">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="wrist_3_motor">
       <mechanicalReduction>1</mechanicalReduction>
@@ -383,14 +383,14 @@
     <child link="robotiq_85_left_knuckle_link"/>
     <axis xyz="0 0 1"/>
     <origin rpy="3.141592653589793 0.0 0.0" xyz="0.05490451627 0.03060114443 0.0"/>
-    <limit effort="1000" lower="0.0" upper="0.80285" velocity="0.5"/>
+    <limit effort="1000" lower="0.0" upper="0.80285" velocity="2.0"/>
   </joint>
-  <joint name="robotiq_85_right_knuckle_joint" type="continuous">
+  <joint name="robotiq_85_right_knuckle_joint" type="revolute">
     <parent link="robotiq_85_base_link"/>
     <child link="robotiq_85_right_knuckle_link"/>
     <axis xyz="0 0 1"/>
     <origin rpy="0.0 0.0 0.0" xyz="0.05490451627 -0.03060114443 0.0"/>
-    <limit effort="1000" lower="-3.14" upper="3.14" velocity="100.0"/>
+    <limit effort="1000" lower="-3.14" upper="3.14" velocity="2.0"/>
     <mimic joint="robotiq_85_left_knuckle_joint"/>
   </joint>
   <link name="robotiq_85_left_knuckle_link">
@@ -471,20 +471,20 @@
       <inertia ixx="0.000003" ixy="-0.000002" ixz="0.000000" iyx="-0.000002" iyy="0.000021" iyz="0.000000" izx="0.000000" izy="0.000000" izz="0.000020"/>
     </inertial>
   </link>
-  <joint name="robotiq_85_left_inner_knuckle_joint" type="continuous">
+  <joint name="robotiq_85_left_inner_knuckle_joint" type="revolute">
     <parent link="robotiq_85_base_link"/>
     <child link="robotiq_85_left_inner_knuckle_link"/>
     <axis xyz="0 0 1"/>
     <origin rpy="3.141592653589793 0.0 0.0" xyz="0.06142 0.0127 0"/>
-    <limit effort="0.1" lower="-3.14" upper="3.14" velocity="100.0"/>
+    <limit effort="1000" lower="-3.14" upper="3.14" velocity="2.0"/>
     <mimic joint="robotiq_85_left_knuckle_joint" offset="0"/>
   </joint>
-  <joint name="robotiq_85_right_inner_knuckle_joint" type="continuous">
+  <joint name="robotiq_85_right_inner_knuckle_joint" type="revolute">
     <parent link="robotiq_85_base_link"/>
     <child link="robotiq_85_right_inner_knuckle_link"/>
     <axis xyz="0 0 1"/>
     <origin rpy="0 0 0" xyz="0.06142 -0.0127 0"/>
-    <limit effort="0.1" lower="-3.14" upper="3.14" velocity="100.0"/>
+    <limit effort="1000" lower="-3.14" upper="3.14" velocity="2.0"/>
     <mimic joint="robotiq_85_left_knuckle_joint" offset="0"/>
   </joint>
   <link name="robotiq_85_left_inner_knuckle_link">
@@ -521,20 +521,20 @@
       <inertia ixx="0.000039" ixy="0.000000" ixz="0.000000" iyx="0.000000" iyy="0.000005" iyz="0.000000" izx="0.000000" izy="0.000000" izz="0.000035"/>
     </inertial>
   </link>
-  <joint name="robotiq_85_left_finger_tip_joint" type="continuous">
+  <joint name="robotiq_85_left_finger_tip_joint" type="revolute">
     <parent link="robotiq_85_left_inner_knuckle_link"/>
     <child link="robotiq_85_left_finger_tip_link"/>
     <axis xyz="0 0 1"/>
     <origin rpy="0.0 0.0 0.0" xyz="0.04303959807 -0.03759940821 0.0"/>
-    <limit effort="0.1" lower="-3.14" upper="3.14" velocity="100.0"/>
+    <limit effort="1000" lower="-3.14" upper="3.14" velocity="2.0"/>
     <mimic joint="robotiq_85_left_knuckle_joint" multiplier="-1"/>
   </joint>
-  <joint name="robotiq_85_right_finger_tip_joint" type="continuous">
+  <joint name="robotiq_85_right_finger_tip_joint" type="revolute">
     <parent link="robotiq_85_right_inner_knuckle_link"/>
     <child link="robotiq_85_right_finger_tip_link"/>
     <axis xyz="0 0 1"/>
     <origin rpy="0.0 0.0 0.0" xyz="0.04303959807 -0.03759940821  0.0"/>
-    <limit effort="0.1" lower="-3.14" upper="3.14" velocity="100.0"/>
+    <limit effort="1000" lower="-3.14" upper="3.14" velocity="2.0"/>
     <mimic joint="robotiq_85_left_knuckle_joint" multiplier="-1"/>
   </joint>
   <link name="robotiq_85_left_finger_tip_link">
@@ -589,15 +589,17 @@
   <transmission name="robotiq_85_left_knuckle_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="robotiq_85_left_knuckle_joint">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       <!-- <hardwareInterface>EffortJointInterface</hardwareInterface> -->
     </joint>
     <actuator name="robotiq_85_left_knuckle_motor">
       <mechanicalReduction>1</mechanicalReduction>
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       <!-- <hardwareInterface>EfforJointInterface</hardwareInterface> -->
     </actuator>
   </transmission>
+
+
   <!-- Mimic joints -->
   <gazebo>
     <plugin filename="libgazebo_mimic_joint_plugin.so" name="mimic_robotiq_85_1">

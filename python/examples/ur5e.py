@@ -224,6 +224,7 @@ rb_states = gymtorch.wrap_tensor(_rb_states)
 _dof_states = gym.acquire_dof_state_tensor(sim)
 dof_states = gymtorch.wrap_tensor(_dof_states)
 dof_pos = dof_states[:, 0].view(num_envs, 12, 1)
+# print(dof_pos)
 
 # Create a tensor noting whether the gripper should return to the initial position
 gripper_restart = torch.full([num_envs], False, dtype=torch.bool).to(device)
@@ -252,12 +253,15 @@ while not gym.query_viewer_has_closed(viewer):
     box_dot = box_dir @ down_dir.view(3, 1)
 
     # how far the hand should be from box for grasping
-    grasp_offset = 0.12
+    grasp_offset = 0.13
 
     # determine if we're holding the box (grippers are closed and box is near)
     gripper_sep = dof_pos[:, 10] + dof_pos[:, 11]
-    gripped = (gripper_sep < 0.045) & (box_dist < grasp_offset + 0.5 * box_size)
-    # print(gripped)
+    # print(box_pos[:, 2] > 0.6)
+    # print(box_dist < grasp_offset + 0.5 * box_size)
+    # (box_pos[:, 2] > 0.5 + box_size).view(num_envs, 1)
+    gripped =  (gripper_sep < -0.3) & (box_dist < grasp_offset + 0.5 * box_size)
+    print(gripped)
 
     yaw_q = cube_grasping_yaw(box_rot, corners)
     box_yaw_dir = quat_axis(yaw_q, 0)
@@ -267,14 +271,14 @@ while not gym.query_viewer_has_closed(viewer):
     # determine if we have reached the initial position; if so allow the gripper to start moving to the box
     to_init = init_pos - gripper_base_pos
     init_dist = torch.norm(to_init, dim=-1)
-    gripper_restart = (gripper_restart & (init_dist > 0.02)).squeeze(-1)
-    return_to_start = (gripper_restart | gripped.squeeze(-1)).unsqueeze(-1)
+    # gripper_restart = (gripper_restart & (init_dist > 0.02)).squeeze(-1)
+    return_to_start = ((init_dist > 0.02).squeeze(-1) & gripped.squeeze(-1)).unsqueeze(-1)
 
     # if gripper is above box, descend to grasp rest_offset
     # otherwise, seek a position above the box
     above_box = ((box_dot >= 0.99) & (yaw_dot >= 0.95) & (box_dist < grasp_offset * 2)).squeeze(-1)
     grasp_pos = box_pos.clone()
-    grasp_pos[:, 2] = torch.where(above_box, box_pos[:, 2] + grasp_offset, box_pos[:, 2] + grasp_offset * 1.5)
+    grasp_pos[:, 2] = torch.where(above_box, box_pos[:, 2] + grasp_offset, box_pos[:, 2] + grasp_offset * 1.7)
     # print(above_box)
 
     # compute goal position and orientation
@@ -297,15 +301,19 @@ while not gym.query_viewer_has_closed(viewer):
 
     # gripper actions depend on distance between gripper base and box
     close_gripper = (box_dist < grasp_offset + 0.03) | gripped
-    print(close_gripper)
-    # always open the gripper above a certain height, dropping the box and restarting
-    gripper_restart = gripper_restart | (box_pos[:, 2] > 0.6)
-    # print(gripper_restart)
-    keep_going = torch.logical_not(gripper_restart)
-    close_gripper = close_gripper & keep_going.unsqueeze(-1)
     # print(close_gripper)
-    grip_acts = torch.where(close_gripper, torch.Tensor([[1.57, 1.57]] * num_envs).to(device), torch.Tensor([[0.04, 0.04]] * num_envs).to(device))
-    pos_target[:, 10:12] = grip_acts.unsqueeze(-1)
+
+    # # always open the gripper above a certain height, dropping the box and restarting
+    # gripper_restart = gripper_restart | (box_pos[:, 2] > 0.6)
+
+    # print(gripper_restart)
+    keep_going = torch.logical_not(return_to_start)
+    # close_gripper = close_gripper & keep_going.unsqueeze(-1)
+    # print(close_gripper)
+    grip_acts = torch.where(close_gripper, torch.Tensor([[1., 1., 1., 1., -1., -1.]] * num_envs).to(device), torch.Tensor([[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]] * num_envs).to(device))
+    # grip_acts = torch.where(gripped, dof_pos[:, 6:12].view(num_envs, 6), grip_acts)
+    pos_target[:, 6:12] = grip_acts.unsqueeze(-1)
+    pos_target = torch.where(gripped & (box_pos[:, 2] > 0.6).unsqueeze(-1) , dof_pos.squeeze(-1), pos_target.squeeze(-1))
 
     # set new position targets
     gym.set_dof_position_target_tensor(sim, gymtorch.unwrap_tensor(pos_target))
